@@ -16,12 +16,8 @@ class UserService(
 
     private val passwordEncoder = BCryptPasswordEncoder()
 
-    //@Autowired
-    //lateinit var userRepository: UserRepository
-
     override fun loadUserByUsername(username: String?): UserDetails {
         val user = getAllUsers().find { it.username == username }
-        passwordEncoder.matches("123das45", user?.password)
         val userDetails = User.builder()
             .username(user?.username)
             .password(user?.password)

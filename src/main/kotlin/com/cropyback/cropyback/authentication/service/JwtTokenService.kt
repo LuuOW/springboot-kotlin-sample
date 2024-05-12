@@ -18,8 +18,6 @@ class JwtTokenService(
 ) {
     private val jwtSecret: String = env.getProperty("jwt.secret", "")
 
-    //private val jwtSecret = "DJGX2vIQN6gLTZId2Ac_hIvu8syAShiu80cDSFwjH_c"
-
     private val signer: JWSSigner = MACSigner(jwtSecret)
     private val verifier: JWSVerifier = MACVerifier(jwtSecret)
 
