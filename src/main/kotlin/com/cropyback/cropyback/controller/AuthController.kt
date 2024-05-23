@@ -5,14 +5,18 @@ import com.cropyback.cropyback.database.entities.auth.AuthResponse
 import com.cropyback.cropyback.database.entities.auth.LoginRequest
 import com.cropyback.cropyback.database.entities.auth.SignUpRequest
 import com.cropyback.cropyback.service.UserService
+import jakarta.servlet.http.HttpServletRequest
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Lazy
 import org.springframework.data.repository.query.Param
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -37,16 +41,28 @@ class AuthController(
     }
 
     @PostMapping("/login")
-    fun login(@RequestBody loginReq: LoginRequest): ResponseEntity<AuthResponse> {
-        val token = jwtService.generateToken(loginReq.username, mapOf("roles" to "USER", "username" to loginReq.username))
+    fun login(@RequestBody loginReq: LoginRequest, request: HttpServletRequest): ResponseEntity<Any> {
+        val role = userService.getAllUsers().find { it.username == loginReq.username }?.role!!
+
+        val token = jwtService.generateToken(
+            loginReq.username,
+            mapOf("roles" to listOf(role), "username" to loginReq.username)
+        )
+
         try {
             val username = loginReq.username
             val password = loginReq.password
             authenticationManager.authenticate(UsernamePasswordAuthenticationToken(username, password))
-            return ResponseEntity.ok(AuthResponse(token))
+            return ResponseEntity.ok().body(AuthResponse(token))
         } catch (e: BadCredentialsException) {
             throw Exception("Incorrect username or password", e)
         }
+    }
+
+    private fun isWebBrowserRequest(request: HttpServletRequest): Boolean {
+        val userAgent = request.getHeader("User-Agent") ?: ""
+        return userAgent.contains("Mozilla") || userAgent.contains("Chrome") ||
+                userAgent.contains("Safari") // Add more browser checks if needed
     }
 
     @PostMapping("/signup")

@@ -3,6 +3,8 @@ package com.cropyback.cropyback.service
 import com.cropyback.cropyback.database.entities.user.UserEntity
 import com.cropyback.cropyback.database.entities.auth.SignUpRequest
 import com.cropyback.cropyback.repository.UserRepository
+import org.bson.types.ObjectId
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -21,9 +23,17 @@ class UserService(
         val userDetails = User.builder()
             .username(user?.username)
             .password(user?.password)
-            .roles("USER")
+            .roles(user?.role)
             .build()
         return userDetails
+    }
+
+    fun updateUserImages(user: UserEntity) {
+        userRepository.save(user)
+    }
+
+    fun findUserById(id: String): UserEntity {
+        return userRepository.findById(id).get()
     }
 
 
@@ -34,7 +44,7 @@ class UserService(
             username = newUser.username,
             email = newUser.email,
             password = newUser.password,
-            role = "USER"
+            role = newUser.role
         )
         )
     }

@@ -29,6 +29,12 @@ dependencies {
 	implementation("org.springframework.security:spring-security-crypto:5.6.4")
 	implementation("org.springframework.security:spring-security-jwt:1.1.1.RELEASE")
 
+	//thymeleaf
+	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+
+	implementation("org.springframework.kafka:spring-kafka")
+
+
 
 	//utils
 	implementation("com.google.code.gson:gson:2.10.1")

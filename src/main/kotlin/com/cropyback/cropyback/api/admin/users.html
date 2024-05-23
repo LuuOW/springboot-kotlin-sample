@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Admin Users</title>
+</head>
+<body>
+<h1>Admin Users</h1>
+<ul th:each="user : ${users}">
+    <li th:text="${user.username}"></li>
+</ul>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const token = /*[[${session.getAttribute('token')}]*/ '';
+    // You can access the token from the session here
+    // and use it in your JavaScript logic
+    /*]]>*/
+</script>
+</body>
+</html>
