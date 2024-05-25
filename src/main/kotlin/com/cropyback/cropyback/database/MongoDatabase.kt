@@ -1,24 +1,22 @@
+import com.cropyback.cropyback.repository.ChatsRepository
 import com.cropyback.cropyback.repository.ImageRepository
 import com.cropyback.cropyback.repository.UserRepository
 import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
 import com.mongodb.ServerApi
 import com.mongodb.ServerApiVersion
-import com.mongodb.kotlin.client.coroutine.MongoClient
 import kotlinx.coroutines.*
 import org.bson.Document
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
-import org.springframework.data.mongodb.MongoDatabaseFactory
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
-import java.awt.Image
 
 
 @Configuration
-@EnableMongoRepositories(basePackageClasses = [UserRepository::class, ImageRepository::class])
+@EnableMongoRepositories(basePackageClasses = [UserRepository::class, ImageRepository::class, ChatsRepository::class])
 class MongoDatabase(
     @Autowired private val env: Environment
 ): AbstractMongoClientConfiguration() {

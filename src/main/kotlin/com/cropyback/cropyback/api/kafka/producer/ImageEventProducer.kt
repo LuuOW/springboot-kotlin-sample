@@ -1,5 +1,6 @@
 package com.cropyback.cropyback.api.kafka.producer
 
+import com.cropyback.cropyback.authentication.utils.GeneratorsUtil.generateRandomId
 import com.google.gson.annotations.SerializedName
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
@@ -20,13 +21,6 @@ class ImageEventProducer(
         kafkaTemplate.send("image-events", st)
     }
 
-}
-
-fun generateRandomId(length: Int): String {
-    val random = Random.Default
-    val maxValue = Math.pow(10.0, length.toDouble()).toLong() - 1
-    val randomNumber = random.nextLong(0, maxValue + 1)
-    return String.format("%0${length}d", randomNumber)
 }
 
 data class ImageEvent(

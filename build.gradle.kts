@@ -34,6 +34,18 @@ dependencies {
 
 	implementation("org.springframework.kafka:spring-kafka")
 
+	// websockets
+	implementation("org.springframework.boot:spring-boot-starter-websocket")
+
+	// twilio (auth)
+	implementation("com.twilio.sdk:twilio:10.2.0")
+
+	//cache
+	implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+
+	// mail
+	implementation("com.sun.mail:jakarta.mail:2.0.1")
+
 
 
 	//utils

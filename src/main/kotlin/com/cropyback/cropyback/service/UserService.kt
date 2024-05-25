@@ -49,6 +49,10 @@ class UserService(
         )
     }
 
+    fun updateUser(user: UserEntity) {
+        userRepository.save(user)
+    }
+
     fun getAllUsers(): List<UserEntity> {
         return userRepository.findAll()
     }
