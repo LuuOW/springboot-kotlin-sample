@@ -12,13 +12,13 @@ class MailEventProducer(
 
     private val ge = GeneratorsUtil
 
-    fun mailSentEvent(mail:String) {
+    fun mailSentEvent(email:String) {
         val code = ge.generateMailCode()
         val hash = ge.generateHash(code, 10)
 
         val type = "REQUESTED"
-        val st = "code=${code}&hash=${hash}&mail=${mail}&type=${type}"
-        kafkaTemplate.send("message-events", st)
+        val st = "code=${code}&hash=${hash}&email=${email}&type=${type}"
+        kafkaTemplate.send("mail-events", st)
     }
 
 

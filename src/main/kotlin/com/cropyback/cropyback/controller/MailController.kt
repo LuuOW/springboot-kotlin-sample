@@ -1,6 +1,7 @@
 package com.cropyback.cropyback.controller
 
 import com.cropyback.cropyback.api.kafka.producer.MailEventProducer
+import com.sun.mail.util.MailConnectException
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -16,12 +17,18 @@ class MailController(
 
 
     @PostMapping("/mail/send")
-    fun sendVerificationCode(@RequestBody email: String):ResponseEntity<String> {
-        mailEventProducer.mailSentEvent(email)
-
-
-
-        return ResponseEntity.ok().body("Email Sent")
+    fun sendVerificationCode(@RequestBody email: SendMailAddress):ResponseEntity<String> {
+        val mEmail = email.email
+        try {
+            mailEventProducer.mailSentEvent(mEmail)
+            return ResponseEntity.ok().body("Email Sent")
+        } catch (e: MailConnectException) {
+            throw Exception("mail error : ${e.message}, with: ${e.stackTrace}")
+        }
     }
 
 }
+
+data class SendMailAddress(
+    var email: String = ""
+)

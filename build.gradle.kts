@@ -59,6 +59,9 @@ dependencies {
 	implementation("org.mongodb:mongodb-driver-kotlin-coroutine:5.1.0")
 	implementation("org.mongodb:bson-kotlinx:5.1.0")
 
+	implementation("com.jcraft:jsch:0.1.55")
+
+
 
 
 
@@ -73,17 +76,6 @@ tasks.withType<KotlinCompile> {
 		freeCompilerArgs += "-Xjsr305=strict"
 		jvmTarget = "17"
 	}
-}
-
-/*
-tasks.withType<org.springframework.boot.gradle.tasks.run.BootRun> {
-	jvmArgs = listOf("--add-opens", "java.base/java.io=ALL-UNNAMED")
-}
-*/
-
-tasks.bootRun {
-
-
 }
 
 tasks.withType<Test> {

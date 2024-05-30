@@ -10,7 +10,7 @@ import org.springframework.web.util.HtmlUtils
 @Controller
 class GreetingController {
 
-    @MessageMapping("hello")
+    @MessageMapping("/hello")
     @SendTo("/topic/greetings")
     fun greeting(message: HelloMessage): Greeting {
         Thread.sleep(1000)

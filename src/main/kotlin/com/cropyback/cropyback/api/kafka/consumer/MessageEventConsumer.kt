@@ -11,7 +11,7 @@ class MessageEventConsumer(
     private val userService: UserService
 ) {
 
-    @KafkaListener(topics = ["message-events"])
+    @KafkaListener(topics = ["message-events"], groupId = "crop")
     fun listen(event: String) {
 
         val chatId = event.substringAfter("chat_id=").substringBefore("&")
@@ -23,8 +23,20 @@ class MessageEventConsumer(
             val p1 = userService.findUserById(owner)
             val p2 = userService.findUserById(target)
 
-            val p1Update = p1.chats.toMutableList().also { it.add(chatId) }
-            val p2Update = p2.chats.toMutableList().also { it.add(chatId) }
+            val p1Update = p1.chats.toMutableList().also {
+                if (!it.contains(chatId)) {
+                    it.add(chatId)
+                } else {
+                    return
+                }
+            }
+            val p2Update = p2.chats.toMutableList().also {
+                if (!it.contains(chatId)) {
+                    it.add(chatId)
+                } else {
+                    return
+                }
+            }
 
             userService.updateUser(p1.copy(chats=p1Update))
             userService.updateUser(p2.copy(chats=p2Update))

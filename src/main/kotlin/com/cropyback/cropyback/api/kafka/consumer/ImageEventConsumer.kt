@@ -14,7 +14,7 @@ class ImageEventConsumer(
     private val userService: UserService
 ) {
 
-    @KafkaListener(topics = ["image-events"])
+    @KafkaListener(topics = ["image-events"], groupId = "crop")
     fun listen(event: String) {
 
         val userId = event.substringAfter("user=").substringBefore("&")
