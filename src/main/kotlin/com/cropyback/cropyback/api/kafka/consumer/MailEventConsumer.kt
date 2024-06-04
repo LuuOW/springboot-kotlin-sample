@@ -3,7 +3,6 @@ package com.cropyback.cropyback.api.kafka.consumer
 import com.cropyback.cropyback.api.verification.mail.MailCacheService
 import com.cropyback.cropyback.api.verification.mail.MailComposerService
 import com.cropyback.cropyback.api.verification.mail.MailCredentials
-import com.cropyback.cropyback.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
 import org.springframework.kafka.annotation.KafkaListener
@@ -15,10 +14,10 @@ class MailEventConsumer(
     @Autowired private val env: Environment
 ) {
 
-    private val MAIL_USER: String = env.getProperty("james.mail.user", "")
-    private val MAIL_PASSWORD: String = env.getProperty("james.mail.password", "")
-    private val MAIL_HOST: String = env.getProperty("james.mail.host", "")
-    private val MAIL_PORT: String = env.getProperty("james.mail.port", "")
+    private val MAIL_USER: String = env.getProperty("smtp.username", "")
+    private val MAIL_PASSWORD: String = env.getProperty("smtp.password", "")
+    private val MAIL_HOST: String = env.getProperty("smtp.host", "")
+    private val MAIL_PORT: String = env.getProperty("smtp.port", "")
 
 
     @KafkaListener(topics = ["mail-events"], groupId = "crop")
@@ -31,8 +30,12 @@ class MailEventConsumer(
 
         if (type == "REQUESTED") {
             mailCache.storeCode(code, hash)
-            val composer = MailComposerService(MailCredentials(MAIL_USER ,MAIL_PASSWORD ,MAIL_HOST, 8000))
+            val composer = MailComposerService(MailCredentials(MAIL_USER ,MAIL_PASSWORD ,MAIL_HOST, MAIL_PORT.toInt()))
             composer.sendEmail(toEmail = email, "Verification Code: ${code}","Your verification code is: ${code}")
+
+        }
+
+        if (event == "VERIFY") {
 
         }
 

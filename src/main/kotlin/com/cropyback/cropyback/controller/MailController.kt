@@ -27,8 +27,24 @@ class MailController(
         }
     }
 
+    @PostMapping("/email/verification")
+    fun verifyEmailCode(@RequestBody requestBody: EmailCode): ResponseEntity<String> {
+        val code = requestBody.code
+        try {
+            mailEventProducer.verificationRequest(code)
+            return ResponseEntity.ok().body("Email succesfully verified")
+        } catch (e: Exception) {
+            throw Exception("Wrong code or code expired")
+        }
+    }
+
+    data class EmailCode(
+        val code: String
+    )
+
+    data class SendMailAddress(
+        var email: String = ""
+    )
+
 }
 
-data class SendMailAddress(
-    var email: String = ""
-)

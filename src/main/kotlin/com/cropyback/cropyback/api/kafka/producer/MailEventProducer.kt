@@ -8,7 +8,8 @@ import org.springframework.stereotype.Service
 @Service
 class MailEventProducer(
     private val kafkaTemplate: KafkaTemplate<String, String>,
-) {
+    private val mailCache: MailCacheService,
+    ) {
 
     private val ge = GeneratorsUtil
 
@@ -19,6 +20,11 @@ class MailEventProducer(
         val type = "REQUESTED"
         val st = "code=${code}&hash=${hash}&email=${email}&type=${type}"
         kafkaTemplate.send("mail-events", st)
+    }
+
+    fun verificationRequest(code: String ): Boolean {
+        kafkaTemplate.send("mail-events", "VERIFY")
+        return mailCache.verifyCode(code)
     }
 
 

@@ -18,7 +18,7 @@ class MailCacheService(
         codesCache?.put(code, hash)
     }
 
-    fun verifyCode(code: String, hash: String): Boolean {
+    fun verifyCode(code: String): Boolean {
         val codesCache = cacheManager.getCache("mailCache")
         val cachedHash = codesCache?.get(code)?.get() as? String
         return cachedHash != null && ge.verifyCode(code, cachedHash)
