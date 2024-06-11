@@ -54,12 +54,20 @@ dependencies {
 
 	// mongo
 	implementation ("org.mongodb:mongodb-driver-sync:4.11.2")
+	implementation("org.web3j:web3j-spring-boot-starter:1.6.0" )
 	implementation ("org.springframework.boot:spring-boot-starter-data-mongodb")
 	implementation ("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
 	implementation("org.mongodb:mongodb-driver-kotlin-coroutine:5.1.0")
 	implementation("org.mongodb:bson-kotlinx:5.1.0")
 
 	implementation("com.jcraft:jsch:0.1.55")
+
+	//rabbitmq
+	implementation("org.springframework.boot:spring-boot-starter-amqp")
+	implementation("org.springframework.amqp:spring-rabbit-stream")
+
+	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
+
 
 
 

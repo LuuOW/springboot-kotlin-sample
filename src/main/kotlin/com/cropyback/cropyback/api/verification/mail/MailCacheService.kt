@@ -14,14 +14,14 @@ class MailCacheService(
     private val ge = GeneratorsUtil
 
     fun storeCode(code: String, hash:String) {
-        val codesCache = cacheManager.getCache("mailCache")
+        val codesCache = cacheManager.getCache("codesCache")
         codesCache?.put(code, hash)
     }
 
     fun verifyCode(code: String): Boolean {
-        val codesCache = cacheManager.getCache("mailCache")
-        val cachedHash = codesCache?.get(code)?.get() as? String
-        return cachedHash != null && ge.verifyCode(code, cachedHash)
+        val codesCache = cacheManager.getCache("codesCache")
+        val cachedHash = codesCache!!.get(code)!!.get()
+        return ge.verifyCode(code, cachedHash.toString())
     }
 
 }

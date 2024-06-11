@@ -27,10 +27,15 @@ object GeneratorsUtil {
     }
 
     fun verifyCode(code: String, hash: String): Boolean {
-        val expirationTime = hash.substring(64).toLong()
+        val expirationTimeString = hash.substring(64) // Extract as String
+        val expirationTime = try {
+            expirationTimeString.toLong() // Try to convert to Long
+        } catch (e: NumberFormatException) {
+            Instant.now().epochSecond + 60 * 5 // Default to 5 minutes in the future if invalid
+        }
+
         return Instant.now().epochSecond <= expirationTime && generateHash(code) == hash
     }
-
 
 }
 

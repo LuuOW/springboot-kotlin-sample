@@ -16,7 +16,7 @@ class MailController(
 ){
 
 
-    @PostMapping("/mail/send")
+    @PostMapping("/email/send")
     fun sendVerificationCode(@RequestBody email: SendMailAddress):ResponseEntity<String> {
         val mEmail = email.email
         try {
@@ -27,19 +27,19 @@ class MailController(
         }
     }
 
-    @PostMapping("/email/verification")
+    @PostMapping("/email/verify")
     fun verifyEmailCode(@RequestBody requestBody: EmailCode): ResponseEntity<String> {
         val code = requestBody.code
         try {
             mailEventProducer.verificationRequest(code)
             return ResponseEntity.ok().body("Email succesfully verified")
         } catch (e: Exception) {
-            throw Exception("Wrong code or code expired")
+            throw Exception("Error verifying code: ${e.message}, by: ${e.cause} ")
         }
     }
 
     data class EmailCode(
-        val code: String
+        val code: String = ""
     )
 
     data class SendMailAddress(

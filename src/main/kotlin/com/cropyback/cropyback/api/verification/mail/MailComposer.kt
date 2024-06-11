@@ -28,7 +28,7 @@ class MailComposerService(private val credentials: MailCredentials) {
 
         try {
             val message = MimeMessage(session).apply {
-                setFrom("lucas.kempe@icloud.com")
+                setFrom("0xef8f09091feb60080291da6fae229c3b8f6d24aa@dmail.ai")
                 setRecipient(Message.RecipientType.TO, InternetAddress(toEmail))
                 setSubject(subject)
                 setText(body)
