@@ -12,7 +12,7 @@ import org.springframework.web.socket.TextMessage
 @Component
 class QueueProducer(
     private val logger: Logger
-){
+) {
 
     private var rabbitTemplate: RabbitTemplate? = null
 

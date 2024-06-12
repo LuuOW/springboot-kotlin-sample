@@ -5,6 +5,7 @@ import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
 import com.mongodb.ServerApi
 import com.mongodb.ServerApiVersion
+import com.mongodb.client.MongoClient
 import kotlinx.coroutines.*
 import org.bson.Document
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,7 +29,7 @@ class MongoDatabase(
     private val dbPassword: String = env.getProperty("db_password", "")
 
     @Bean
-    override fun mongoClient(): com.mongodb.client.MongoClient {
+    override fun mongoClient(): MongoClient {
         val connectionString = "mongodb+srv://lkempe:$dbPassword@cluster0.zvnm2t9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
         val serverApi = ServerApi.builder()
             .version(ServerApiVersion.V1)
