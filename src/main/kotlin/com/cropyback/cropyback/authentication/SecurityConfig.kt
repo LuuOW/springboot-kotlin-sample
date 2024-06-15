@@ -16,6 +16,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import IpFilter
+import FakeIpFilter
 
 
 
@@ -50,7 +52,9 @@ class SecurityConfig {
             .authorizeHttpRequests {
                 it.requestMatchers("/**").authenticated()
             }
+            .addFilterBefore(fakeIPFilter(), UsernamePasswordAuthenticationFilter::class.java)
             .addFilterAfter(JWTAuthenticationFilter(jwtService, service), UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(ipFilterBean(), JWTAuthenticationFilter::class.java)
         //.addFilterBefore(AuthenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
         return http.build()
     }
@@ -58,6 +62,16 @@ class SecurityConfig {
     @Bean
     fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager {
         return authenticationConfiguration.authenticationManager
+    }
+
+        @Bean
+    fun ipFilterBean(): IpFilter {
+        return IpFilter()
+    }
+
+    @Bean
+    fun fakeIPFilter(): FakeIpFilter {
+        return FakeIpFilter()
     }
 
 

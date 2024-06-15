@@ -38,6 +38,7 @@ out/
 
 ### Kotlin ###
 .kotlin
-/src/main/resources/application.properties
-/keystore.p12
+application.properties
+.idx
+springboot.p12
 /src/main/kotlin/com/cropyback/cropyback/api/verification/mail/mail_ssh.pem
