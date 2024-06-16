@@ -22,9 +22,9 @@ class MailEventProducer(
         kafkaTemplate.send("mail-events", st)
     }
 
-    fun verificationRequest(code: String ) {
+    fun verificationRequest(code: String ): Boolean {
         kafkaTemplate.send("mail-events", "VERIFY")
-        mailCache.verifyCode(code)
+        return mailCache.verifyCode(code)
     }
 
 
