@@ -3,6 +3,7 @@ package com.cropyback.cropyback.authentication.utils
 import java.security.MessageDigest
 import java.time.Instant
 import kotlin.random.Random
+import java.time.ZoneOffset
 
 object GeneratorsUtil {
 
@@ -17,25 +18,21 @@ object GeneratorsUtil {
         return (100000..999999).random().toString()
     }
 
+ 
     fun generateHash(code: String, expirationMinutes: Long = 10): String {
         val expirationTime = Instant.now().plusSeconds(expirationMinutes * 60).epochSecond
         val message = "$code$expirationTime"
-
         val digest = MessageDigest.getInstance("SHA-256")
         val hashBytes = digest.digest(message.toByteArray())
         return hashBytes.fold("") { str, byte -> str + "%02x".format(byte) }
     }
 
     fun verifyCode(code: String, hash: String): Boolean {
-        val expirationTimeString = hash.substring(64) // Extract as String
-        val expirationTime = try {
-            expirationTimeString.toLong() // Try to convert to Long
-        } catch (e: NumberFormatException) {
-            Instant.now().epochSecond + 60 * 5 // Default to 5 minutes in the future if invalid
-        }
+        val expirationTimeString = hash.substring(64)
+        val expirationTime = expirationTimeString.toLongOrNull() ?: return false
 
-        return Instant.now().epochSecond <= expirationTime && generateHash(code) == hash
+        val currentTime = Instant.now().epochSecond // Use epochSecond directly
+        return currentTime <= expirationTime && generateHash(code) == hash
     }
-
 }
 

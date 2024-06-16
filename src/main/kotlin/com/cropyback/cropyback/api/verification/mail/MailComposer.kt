@@ -8,9 +8,7 @@ import java.util.*
 class MailComposerService(private val credentials: MailCredentials) {
 
     fun sendEmail(toEmail: String, subject: String, body: String) {
-        val tunnel = SshTunnel() // Create a helper class for SSH tunnel management (see below)
-
-
+        
         val properties = Properties().apply {
             put("mail.smtp.auth", "true")
             put("mail.smtp.starttls.enable", "true")
