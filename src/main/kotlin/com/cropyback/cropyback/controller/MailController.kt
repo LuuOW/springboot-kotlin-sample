@@ -18,24 +18,24 @@ class MailController(
 
 
     @PostMapping("/email/send")
-    fun sendVerificationCode(@RequestBody email: SendMailAddress):ResponseEntity<String> {
+    fun sendVerificationCode(@RequestBody email: SendMailAddress):ResponseEntity<VerificationResponse> {
         val mEmail = email.email
         try {
             mailEventProducer.mailSentEvent(mEmail)
-            return ResponseEntity.ok().body("Email Sent")
+            return ResponseEntity.ok().body(VerificationResponse("Email sent"))
         } catch (e: MailConnectException) {
             throw Exception("mail error : ${e.message}, with: ${e.stackTrace}")
         }
     }
 
     @PostMapping("/email/verify")
-    fun verifyEmailCode(@RequestBody requestBody: EmailCode): ResponseEntity<String> {
+    fun verifyEmailCode(@RequestBody requestBody: EmailCode): ResponseEntity<CodeResponse> {
         val code = requestBody.code
         try {
             if (mailEventProducer.verificationRequest(code)) {
-                return ResponseEntity.ok().body("Email succesfully verified")
+                return ResponseEntity.ok().body(CodeResponse("Email successfully verified", true))
             } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired code")
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(CodeResponse("Invalid or expired code", false))
             }
         } catch (e: Exception) {
             throw Exception("Error verifying code: ${e.message}, by: ${e.cause} ")
@@ -48,6 +48,15 @@ class MailController(
 
     data class SendMailAddress(
         var email: String = ""
+    )
+
+    data class VerificationResponse(
+        val string: String = ""
+    )
+
+    data class CodeResponse(
+        val status: String = "",
+        val isValid: Boolean = false
     )
 
 }
