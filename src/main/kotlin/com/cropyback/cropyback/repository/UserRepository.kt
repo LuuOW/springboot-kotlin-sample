@@ -6,4 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails
 
 interface UserRepository: MongoRepository<UserEntity, String> {
 
+    fun findByEmail(email: String): UserEntity?
+
+
 }
