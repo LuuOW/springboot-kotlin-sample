@@ -68,9 +68,13 @@ class AuthController(
     }
 
     @PostMapping("/signup")
-    fun signUp(@RequestBody signUpRequest: SignUpRequest): ResponseEntity<String> {
+    fun signUp(@RequestBody signUpRequest: SignUpRequest): ResponseEntity<SignUpResponse> {
         userService.saveUser(signUpRequest)
-        return ResponseEntity.ok("User registered successfully")
+        return ResponseEntity.ok(SignUpResponse(status="User registered successfully"))
     }
 
 }
+
+data class SignUpResponse(
+    val status: String = ""
+)

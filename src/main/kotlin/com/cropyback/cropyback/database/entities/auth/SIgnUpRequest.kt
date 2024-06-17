@@ -7,11 +7,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 data class SignUpRequest(
     val username: String,
     val email: String,
-    val password: String
+    val password: String,
+    val role: String
 ) {
     fun toUser(passwordEncoder: BCryptPasswordEncoder) = UserEntity(
         username = username,
         email = email,
-        password = passwordEncoder.encode(password)
+        password = passwordEncoder.encode(password),
+        role = role
     )
 }
