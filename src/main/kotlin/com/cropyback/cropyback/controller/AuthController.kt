@@ -44,7 +44,7 @@ class AuthController(
     }
 
     @PostMapping("/login")
-    fun login(@RequestBody loginReq: LoginRequest, request: HttpServletRequest): ResponseEntity<Any> {
+    fun login(@RequestBody loginReq: LoginRequest, request: HttpServletRequest): ResponseEntity<AuthResponse> {
         val role = userService.getAllUsers().find { it.username == loginReq.username }?.role!!
 
         val token = jwtService.generateToken(
@@ -69,7 +69,7 @@ class AuthController(
     }
 
     @PostMapping("/signup")
-    fun signUp(@RequestBody request: SignUpRequest): ResponseEntity<Any> {
+    fun signUp(@RequestBody request: SignUpRequest): ResponseEntity<SignUpResponse> {
         val username = request.username
         val email = request.email
         val phone = request.phone

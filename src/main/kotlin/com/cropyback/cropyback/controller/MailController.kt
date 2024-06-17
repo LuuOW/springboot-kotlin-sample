@@ -1,6 +1,7 @@
 package com.cropyback.cropyback.controller
 
 import com.cropyback.cropyback.api.kafka.producer.MailEventProducer
+import com.cropyback.cropyback.api.verification.models.response.SMSRequestResponse
 import com.cropyback.cropyback.service.UserService
 import com.sun.mail.util.MailConnectException
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,12 +24,12 @@ class MailController(
     private lateinit var userService: UserService
 
     @PostMapping("/email/request")
-    fun sendVerificationCode(@RequestBody request: SendMailAddress):ResponseEntity<Any> {
+    fun sendVerificationCode(@RequestBody request: SendMailAddress):ResponseEntity<SMSRequestResponse> {
         val mEmail = request.email
         try {
             if (userService.emailExist(mEmail)) {
                 mailEventProducer.mailSentEvent(mEmail)
-                return ResponseEntity.ok().body(VerificationResponse("Email sent"))
+                return ResponseEntity.ok().body(SMSRequestResponse("Email sent"))
             } else {
                 throw ResponseStatusException(HttpStatus.FORBIDDEN, "User doesn't exist")
             }
@@ -57,10 +58,6 @@ class MailController(
 
     data class SendMailAddress(
         var email: String = ""
-    )
-
-    data class VerificationResponse(
-        val string: String = ""
     )
 
     data class CodeResponse(
