@@ -1,13 +1,16 @@
 package com.cropyback.cropyback.controller
 
 import com.cropyback.cropyback.api.kafka.producer.MailEventProducer
+import com.cropyback.cropyback.service.UserService
 import com.sun.mail.util.MailConnectException
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.server.ResponseStatusException
 
 
 @RestController
@@ -16,13 +19,19 @@ class MailController(
     private val mailEventProducer: MailEventProducer
 ){
 
+    @Autowired
+    private lateinit var userService: UserService
 
-    @PostMapping("/email/send")
-    fun sendVerificationCode(@RequestBody email: SendMailAddress):ResponseEntity<VerificationResponse> {
-        val mEmail = email.email
+    @PostMapping("/email/request")
+    fun sendVerificationCode(@RequestBody request: SendMailAddress):ResponseEntity<Any> {
+        val mEmail = request.email
         try {
-            mailEventProducer.mailSentEvent(mEmail)
-            return ResponseEntity.ok().body(VerificationResponse("Email sent"))
+            if (userService.emailExist(mEmail)) {
+                mailEventProducer.mailSentEvent(mEmail)
+                return ResponseEntity.ok().body(VerificationResponse("Email sent"))
+            } else {
+                throw ResponseStatusException(HttpStatus.FORBIDDEN, "User doesn't exist")
+            }
         } catch (e: MailConnectException) {
             throw Exception("mail error : ${e.message}, with: ${e.stackTrace}")
         }

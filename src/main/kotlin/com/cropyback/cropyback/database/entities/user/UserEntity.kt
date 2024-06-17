@@ -12,6 +12,7 @@ data class UserEntity(
     @Id val id: ObjectId = ObjectId(),
     val username: String,
     val email: String,
+    val phone: String,
     var password: String? = null,
     val role: String? = null,
     val created_at : LocalDateTime = now(),

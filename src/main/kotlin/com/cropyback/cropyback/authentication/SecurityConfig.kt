@@ -33,8 +33,13 @@ class SecurityConfig {
             webSecurity
             webSecurity.ignoring().
             requestMatchers(
+                "/api/sms/request",
+                "/api/sms/verify",
+                "/api/email/request",
+                "/api/email/verify",
                 "/api/login",
                 "/api/signup",
+                "/api/password"
             )
         }
     }
@@ -50,7 +55,9 @@ class SecurityConfig {
             .csrf { it.disable() }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests {
-                it.requestMatchers("/**").authenticated()
+                it
+                    .requestMatchers("/**")
+                    .authenticated()
             }
             .addFilterBefore(fakeIPFilter(), UsernamePasswordAuthenticationFilter::class.java)
             .addFilterAfter(JWTAuthenticationFilter(jwtService, service), UsernamePasswordAuthenticationFilter::class.java)

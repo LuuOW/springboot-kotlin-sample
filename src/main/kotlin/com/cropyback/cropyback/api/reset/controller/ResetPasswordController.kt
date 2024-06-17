@@ -26,7 +26,7 @@ class ResetPasswordController {
 
     @GetMapping("/password")
     fun getWelcomeTo(): ResponseEntity<String> {
-        return ResponseEntity.ok("Success")
+        return ResponseEntity.ok("Whale hello there")
     }
 
 }

@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Lazy
 import org.springframework.data.repository.query.Param
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
@@ -68,9 +69,21 @@ class AuthController(
     }
 
     @PostMapping("/signup")
-    fun signUp(@RequestBody signUpRequest: SignUpRequest): ResponseEntity<SignUpResponse> {
-        userService.saveUser(signUpRequest)
-        return ResponseEntity.ok(SignUpResponse(status="User registered successfully"))
+    fun signUp(@RequestBody request: SignUpRequest): ResponseEntity<Any> {
+        val username = request.username
+        val email = request.email
+        val phone = request.phone
+
+        try {
+            if (userService.areCredentialsUnique(username,email,phone)) {
+                userService.saveUser(request)
+                return ResponseEntity.ok(SignUpResponse("Success"))
+            } else {
+                return ResponseEntity.ok(SignUpResponse("Error creating user already exist!"))
+            }
+        } catch (e: Exception) {
+            throw Exception("Error creating user", e)
+        }
     }
 
 }
