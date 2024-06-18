@@ -2,6 +2,7 @@ package com.cropyback.cropyback.controller
 
 import com.cropyback.cropyback.database.entities.user.UserEntity
 import com.cropyback.cropyback.service.UserService
+import org.bson.types.ObjectId
 import org.springframework.data.repository.query.Param
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -23,12 +24,10 @@ class UserController(
         return response
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/users/{username}")
-    fun getByUsername(@Param("username") username: String): ResponseEntity<String> {
-        val user = userService.loadUserByUsername(username)
-        val response = ResponseEntity.ok(user.username)
-        return response
+    fun getByUsername(@Param("username") username: String): ResponseEntity<UserEntity> {
+        val user = userService.findUserByUsername(username)
+        return ResponseEntity.ok().body(user)
     }
-
 }

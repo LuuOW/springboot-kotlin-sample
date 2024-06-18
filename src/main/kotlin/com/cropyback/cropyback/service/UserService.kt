@@ -68,6 +68,15 @@ class UserService(
         return userRepository.findById(id).get()
     }
 
+    fun findUserByUsername(username: String): UserEntity? {
+        val criteria = Criteria().orOperator(
+            Criteria.where("username").`is`(username),
+        )
+        val query = Query(criteria)
+
+        return mongoTemplate.findOne(query, UserEntity::class.java)
+    }
+
 
     fun saveUser(signUpReq: SignUpRequest) {
         val newUser = signUpReq.toUser(passwordEncoder)
