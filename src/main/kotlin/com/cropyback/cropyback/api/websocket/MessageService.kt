@@ -9,6 +9,7 @@ import kotlinx.coroutines.*
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.web.socket.BinaryMessage
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketMessage
@@ -42,8 +43,12 @@ class MessageService(
                 val parsedChat = mapper.writeValueAsBytes(chat)
                 recipientSession.sendMessage(TextMessage(parsedChat))
             }
-
         }
+
+        if (message is BinaryMessage) {
+            logger.debug("Binary message received!")
+        }
+
     }
 
     fun onUserDisconnect(

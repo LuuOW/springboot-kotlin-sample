@@ -8,18 +8,12 @@ import com.cropyback.cropyback.service.UserService
 import jakarta.servlet.http.HttpServletRequest
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.context.annotation.DependsOn
 import org.springframework.context.annotation.Lazy
 import org.springframework.data.repository.query.Param
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -75,7 +69,7 @@ class AuthController(
         val phone = request.phone
 
         try {
-            if (userService.areCredentialsUnique(username,email,phone)) {
+            if (!userService.userExist(username,email,phone)) {
                 userService.saveUser(request)
                 return ResponseEntity.ok(SignUpResponse("Success"))
             } else {

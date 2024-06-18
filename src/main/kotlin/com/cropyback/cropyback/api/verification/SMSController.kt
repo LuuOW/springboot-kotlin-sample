@@ -39,13 +39,14 @@ class SMSController(
     fun sendSMSVerification(@RequestBody request: SMSRequest): ResponseEntity<SMSRequestResponse> {
         val phone = request.phone
         try {
-            if (userService.phoneNumberExist(phone)) {
+            if (true) {
                 Twilio.init(TWILIO_ACCOUNT_SID,TWILIO_AUTH_TOKEN)
                 VerificationCreator(VERIFY_SERVICE_SID, request.phone, "sms")
                     .create()
                 return ResponseEntity.ok().body(SMSRequestResponse("Verification Code Sent"))
             } else {
-                throw ResponseStatusException(HttpStatus.FORBIDDEN, "Phone doesn't exist")
+                return ResponseEntity.ok(SMSRequestResponse(""))
+                //throw ResponseStatusException(HttpStatus.FORBIDDEN, "Phone doesn't exist")
             }
         } catch(tE: TwilioException) {
             throw Exception("Error in twilio: ${tE.message}," + "Reason: ${tE.cause}")

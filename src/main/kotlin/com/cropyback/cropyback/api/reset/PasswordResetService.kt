@@ -14,8 +14,8 @@ class PasswordResetService(
     private val usersRepository: UserRepository
 ){
 
-    fun resetUserPassword(email: String, newPassword: String) {
-        val query = Query().addCriteria(Criteria.where("email").`is`(email))
+    fun resetUserPassword(phone: String, newPassword: String) {
+        val query = Query().addCriteria(Criteria.where("phone").`is`(phone))
 
         mongoTemplate.findOne(query, UserEntity::class.java).let { user ->
             val bcrypt = BCryptPasswordEncoder()

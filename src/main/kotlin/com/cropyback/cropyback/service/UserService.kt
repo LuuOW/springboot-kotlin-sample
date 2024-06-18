@@ -3,11 +3,9 @@ package com.cropyback.cropyback.service
 import com.cropyback.cropyback.database.entities.user.UserEntity
 import com.cropyback.cropyback.database.entities.auth.SignUpRequest
 import com.cropyback.cropyback.repository.UserRepository
-import org.bson.types.ObjectId
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -22,7 +20,7 @@ class UserService(
 
     private val passwordEncoder = BCryptPasswordEncoder()
 
-    fun areCredentialsUnique(
+    fun userExist(
         username: String,
         email: String,
         phone: String
