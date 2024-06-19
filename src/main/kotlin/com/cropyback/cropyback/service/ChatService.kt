@@ -28,25 +28,27 @@ class ChatService(
         val sender = message.senderId
         val receiver = message.recipientId
         val messageIt = message.messageContent
+        val attachment = message.attachament
 
         val query = Query().addCriteria(
-            Criteria()
-            .orOperator(
-                Criteria.where("owner").`is`(ObjectId(sender)).and("target").`is`(ObjectId(receiver)),
-                Criteria.where("owner").`is`(ObjectId(receiver)).and("target").`is`(ObjectId(sender))
+            Criteria().orOperator(
+                Criteria.where("messages").elemMatch(
+                    Criteria.where("sentBy").`is`(ObjectId(sender)).and("owner").`is`(ObjectId(receiver))
+                ),
+                Criteria.where("messages").elemMatch(
+                    Criteria.where("owner").`is`(ObjectId(receiver)).and("sentBy").`is`(ObjectId(sender))
+                )
             )
         )
 
         val existingChat = mongoTemplate.findOne(query, ChatEntity::class.java)
         if (existingChat != null) {
-            val updatedChat = existingChat.messages.toMutableList().also { it.add(MessageEntity(message = messageIt)) }
+            val updatedChat = existingChat.messages.toMutableList().also { it.add(MessageEntity(message = messageIt, sentBy = ObjectId(sender), owner = ObjectId(receiver), attachment = attachment)) }
             chatRepository.save(existingChat.copy(messages = updatedChat))
             eventProducer.messageSentEvent(chatId = existingChat.id.toString(), owner=sender, target = receiver)
         } else {
             val newChat = ChatEntity(
-                owner = ObjectId(sender),
-                target = ObjectId(receiver),
-                messages = listOf(MessageEntity(message = messageIt))
+                messages = listOf(MessageEntity(message = messageIt, sentBy = ObjectId(sender), owner = ObjectId(receiver), attachment = attachment))
             )
             chatRepository.save(newChat)
             eventProducer.messageSentEvent(chatId = newChat.id.toString(), owner=sender, target = receiver)

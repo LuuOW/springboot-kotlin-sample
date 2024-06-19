@@ -1,14 +1,16 @@
 package com.cropyback.cropyback.api.websocket
 
 import MessageService
+import com.cropyback.cropyback.api.kafka.producer.ImageEventProducer
 import com.cropyback.cropyback.service.ChatService
-import jakarta.annotation.PostConstruct
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.env.Environment
+import org.springframework.data.mongodb.gridfs.GridFsTemplate
 import org.springframework.messaging.simp.config.MessageBrokerRegistry
 import org.springframework.messaging.simp.user.SimpUserRegistry
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker
@@ -46,9 +48,6 @@ class WebSocketConfig(
     }
 
     override fun configureWebSocketTransport(registration: WebSocketTransportRegistration) {
-        registration.setMessageSizeLimit(2 * 1024 * 1024) // 2 MB
-        registration.setSendBufferSizeLimit(2 * 1024 * 1024) // 2 MB
-        registration.setSendTimeLimit(20000)
 
         simpUserRegistryProvider.getIfAvailable()
             ?.let { webSocketHandlerDecoratorFactory(it) }?.let {
@@ -56,27 +55,25 @@ class WebSocketConfig(
             }
     }
 
-    @PostConstruct
-    fun logWebSocketConfig() {
-        logger.info("WebSocket message size limit: ${2 * 1024 * 1024}")
-        logger.info("WebSocket send buffer size limit: ${2 * 1024 * 1024}")
-        logger.info("WebSocket send time limit: 20000 ms")
-    }
-
     @Bean
     fun webSocketHandlerDecoratorFactory(simpUserRegistry: SimpUserRegistry): WebSocketHandlerDecoratorFactory {
         return MyWebSocketHandlerDecoratorFactory(simpUserRegistry, messageService, sessionRegistry, logger = logger)
     }
 
-
-
 }
 
 @Configuration
-class AppConfig {
+class AppConfig(
+    @Autowired private val env: Environment
+){
 
     @Autowired
     private lateinit var chatService: ChatService
+
+    @Autowired
+    private lateinit var gridFsTemplate: GridFsTemplate
+    @Autowired
+    private lateinit var imageEventProducer: ImageEventProducer
 
     @Bean
     fun loggerFactory(): Logger {
@@ -90,6 +87,16 @@ class AppConfig {
 
     @Bean
     fun messageService(): MessageService {
-        return MessageService(chatService)
+        return MessageService(chatService, gridFsTemplate, imageEventProducer)
+    }
+
+    @Bean
+    fun createWebSocketContainer(): ServletServerContainerFactoryBean {
+        val container = ServletServerContainerFactoryBean()
+        container.setMaxTextMessageBufferSize(2 * 1024 * 1024) // 2 MB
+        container.setMaxBinaryMessageBufferSize(2 * 1024 * 1024) // 2 MB
+        //container.setMaxSessionIdleTimeout(5 * 60 * 1000L) // 5 minutes
+        container.setAsyncSendTimeout(20 * 1000L) // 20 seconds
+        return container
     }
 }

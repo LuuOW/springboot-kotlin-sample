@@ -7,8 +7,8 @@ import org.springframework.web.multipart.MultipartFile
 
 @Document(collection = "images")
 data class ImageEntity(
-    val id: ObjectId = ObjectId.get(), // MongoDB's ObjectID for automatic generation
-    val fileId: String,
+    val id: ObjectId = ObjectId(), // MongoDB's ObjectID for automatic generation
+    //val fileId: String,
     val filename: String,
     val metadata: Map<String, String>? = null
 )

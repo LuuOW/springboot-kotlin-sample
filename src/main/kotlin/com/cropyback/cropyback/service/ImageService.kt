@@ -28,4 +28,8 @@ class ImageService {
         return imageRepository.findById(id).get()
     }
 
+    fun getAllImages(): List<ImageEntity> {
+        return imageRepository.findAll()
+    }
+
 }

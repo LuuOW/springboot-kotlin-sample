@@ -13,6 +13,7 @@ import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.gridfs.GridFsTemplate
+import org.springframework.data.repository.query.Param
 import org.springframework.http.HttpHeaders
 import org.springframework.http.InvalidMediaTypeException
 import org.springframework.http.MediaType
@@ -47,7 +48,7 @@ class ImageController(
             filename,
             file.contentType,
         ).toString()
-        val image = ImageEntity(filename=filename, fileId = fileId)
+        val image = ImageEntity(id = ObjectId(fileId), filename=filename)
         imageService.saveImage(image)
 
         imageEventProducer.sendUploadImageEvent(fileId, user)
@@ -55,9 +56,14 @@ class ImageController(
         return image
     }
 
+    @GetMapping("/images")
+    fun getAllImages(): ResponseEntity<List<ImageEntity>> {
+        return ResponseEntity.ok().body(imageService.getAllImages())
+    }
+
     @PreAuthorize("hasRole('ROLE_USER')")
-    @GetMapping("/images/{id}")
-    fun getImage(@PathVariable id: String): ResponseEntity<ByteArrayResource> {
+    @GetMapping("/image")
+    fun getImage(@Param("id") id: String): ResponseEntity<ByteArrayResource> {
         val image = gridFsTemplate.findOne(Query(Criteria.where("_id").`is`(ObjectId(id))))
 
         return if (!image.equals(null)) {
