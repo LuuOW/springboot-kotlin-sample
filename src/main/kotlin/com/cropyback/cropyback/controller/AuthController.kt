@@ -4,7 +4,7 @@ import com.cropyback.cropyback.authentication.service.JwtTokenService
 import com.cropyback.cropyback.database.entities.auth.AuthResponse
 import com.cropyback.cropyback.database.entities.auth.LoginRequest
 import com.cropyback.cropyback.database.entities.auth.SignUpRequest
-import com.cropyback.cropyback.service.UserService
+import com.cropyback.cropyback.database.sql.service.UserJpaService
 import jakarta.servlet.http.HttpServletRequest
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,8 +29,11 @@ class AuthController(
     @Autowired
     private lateinit var jwtService: JwtTokenService
 
+/*    @Autowired
+    private lateinit var userService: UserService*/
+
     @Autowired
-    private lateinit var userService: UserService
+    private lateinit var userJpaService: UserJpaService
 
     @GetMapping("/validate_token")
     fun validate(@Param("token") token: String): ResponseEntity<Boolean> {
@@ -39,7 +42,8 @@ class AuthController(
 
     @PostMapping("/login")
     fun login(@RequestBody loginReq: LoginRequest, request: HttpServletRequest): ResponseEntity<AuthResponse> {
-        val role = userService.getAllUsers().find { it.username == loginReq.username }?.role!!
+
+        val role = userJpaService.findRoleByUsername(loginReq.username)
 
         val token = jwtService.generateToken(
             loginReq.username,
@@ -56,24 +60,16 @@ class AuthController(
         }
     }
 
-    private fun isWebBrowserRequest(request: HttpServletRequest): Boolean {
-        val userAgent = request.getHeader("User-Agent") ?: ""
-        return userAgent.contains("Mozilla") || userAgent.contains("Chrome") ||
-                userAgent.contains("Safari") // Add more browser checks if needed
-    }
-
     @PostMapping("/signup")
     fun signUp(@RequestBody request: SignUpRequest): ResponseEntity<SignUpResponse> {
-        val username = request.username
-        val email = request.email
-        val phone = request.phone
+        val newUser = request.toUserModel()
 
         try {
-            if (!userService.userExist(username,email,phone)) {
-                userService.saveUser(request)
-                return ResponseEntity.ok(SignUpResponse("Success"))
-            } else {
+            if (userJpaService.userExist(newUser)) {
                 return ResponseEntity.ok(SignUpResponse("Error creating user already exist!"))
+            } else {
+                userJpaService.registerUser(request.toUserModel())
+                return ResponseEntity.ok(SignUpResponse("Success"))
             }
         } catch (e: Exception) {
             throw Exception("Error creating user", e)

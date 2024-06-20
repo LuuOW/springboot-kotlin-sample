@@ -1,14 +1,12 @@
 package com.cropyback.cropyback.api.kafka.consumer
 
-import com.cropyback.cropyback.service.ChatService
-import com.cropyback.cropyback.service.UserService
-import org.bson.types.ObjectId
+import com.cropyback.cropyback.database.sql.service.UserJpaService
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
 
 @Component
 class MessageEventConsumer(
-    private val userService: UserService
+    private val userService: UserJpaService
 ) {
 
     @KafkaListener(topics = ["message-events"], groupId = "crop")
@@ -20,8 +18,8 @@ class MessageEventConsumer(
         val type = event.substringAfter("type=").substringBefore("&")
 
         if (type == "UPDATED") {
-            val p1 = userService.findUserById(owner)
-            val p2 = userService.findUserById(target)
+            val p1 = userService.findUserByUsername(owner)
+            val p2 = userService.findUserByUsername(target)
 
             val p1Update = p1.chats.toMutableList().also {
                 if (!it.contains(chatId)) {

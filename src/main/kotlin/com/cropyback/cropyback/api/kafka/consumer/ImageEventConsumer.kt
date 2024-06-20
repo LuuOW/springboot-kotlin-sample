@@ -1,17 +1,13 @@
 package com.cropyback.cropyback.api.kafka.consumer
 
-import com.cropyback.cropyback.api.kafka.producer.EventType
-import com.cropyback.cropyback.api.kafka.producer.ImageEvent
-import com.cropyback.cropyback.database.entities.user.UserEntity
-import com.cropyback.cropyback.service.UserService
+import com.cropyback.cropyback.database.sql.service.UserJpaService
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
-import java.time.LocalDateTime
 
 
 @Component
 class ImageEventConsumer(
-    private val userService: UserService
+    private val userService: UserJpaService
 ) {
 
     @KafkaListener(topics = ["image-events"], groupId = "crop")
@@ -24,9 +20,9 @@ class ImageEventConsumer(
 
 
         if (type == "UPLOADED") {
-            val user = userService.findUserById(userId)
+            val user = userService.findUserByUsername(userId)
             val updatedList = user.images.toMutableList().also { it.add(imageId) }
-            userService.updateUserImages(user.copy(images = updatedList))
+            userService.updateUser(user.copy(images = updatedList))
         }
     }
 

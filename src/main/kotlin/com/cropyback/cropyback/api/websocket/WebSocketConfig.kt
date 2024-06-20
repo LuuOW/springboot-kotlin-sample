@@ -2,7 +2,7 @@ package com.cropyback.cropyback.api.websocket
 
 import MessageService
 import com.cropyback.cropyback.api.kafka.producer.ImageEventProducer
-import com.cropyback.cropyback.service.ChatService
+import com.cropyback.cropyback.database.sql.service.ChatJpaService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.ObjectProvider
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
-import org.springframework.data.mongodb.gridfs.GridFsTemplate
 import org.springframework.messaging.simp.config.MessageBrokerRegistry
 import org.springframework.messaging.simp.user.SimpUserRegistry
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker
@@ -68,10 +67,8 @@ class AppConfig(
 ){
 
     @Autowired
-    private lateinit var chatService: ChatService
+    private lateinit var chatService: ChatJpaService
 
-    @Autowired
-    private lateinit var gridFsTemplate: GridFsTemplate
     @Autowired
     private lateinit var imageEventProducer: ImageEventProducer
 
@@ -87,7 +84,7 @@ class AppConfig(
 
     @Bean
     fun messageService(): MessageService {
-        return MessageService(chatService, gridFsTemplate, imageEventProducer)
+        return MessageService(chatService, imageEventProducer)
     }
 
     @Bean

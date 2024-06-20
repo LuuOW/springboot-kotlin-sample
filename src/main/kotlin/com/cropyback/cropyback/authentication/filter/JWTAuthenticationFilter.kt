@@ -1,7 +1,7 @@
 package com.cropyback.cropyback.authentication.filter
 
 import com.cropyback.cropyback.authentication.service.JwtTokenService
-import com.cropyback.cropyback.service.UserService
+import com.cropyback.cropyback.database.sql.service.UserJpaService
 import com.nimbusds.jwt.JWTParser
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -15,7 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 
 class JWTAuthenticationFilter(
     private val jwtService: JwtTokenService,
-    private val service: UserService
+    private val service: UserJpaService
 ): OncePerRequestFilter() {
 
     override fun doFilterInternal(
@@ -35,7 +35,7 @@ class JWTAuthenticationFilter(
 
                     val authorities = roles.map { SimpleGrantedAuthority("ROLE_$it") }.toCollection(mutableSetOf())
 
-                    val userDetails = service.loadUserByUsername(username) // Fetch user details
+                    val userDetails = service.findUserByUsername(username)
                     val authentication = UsernamePasswordAuthenticationToken(userDetails, null, authorities)
                     SecurityContextHolder.getContext().authentication = authentication
 

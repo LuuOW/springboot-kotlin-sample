@@ -4,7 +4,7 @@ import com.cropyback.cropyback.api.verification.models.request.SMSRequest
 import com.cropyback.cropyback.api.verification.models.request.SMSVerifyRequest
 import com.cropyback.cropyback.api.verification.models.response.SMSRequestResponse
 import com.cropyback.cropyback.api.verification.models.response.SMSVerifyResponse
-import com.cropyback.cropyback.service.UserService
+import com.cropyback.cropyback.database.sql.service.UserJpaService
 import com.twilio.Twilio
 import com.twilio.exception.TwilioException
 import com.twilio.rest.verify.v2.service.VerificationCheck
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.server.ResponseStatusException
 
 
 @RestController
@@ -28,7 +27,7 @@ class SMSController(
 ) {
 
     @Autowired
-    private lateinit var userService: UserService
+    private lateinit var userService: UserJpaService
 
     private val TWILIO_ACCOUNT_SID: String = env.getProperty("twilio.account.sid", "")
     private val TWILIO_AUTH_TOKEN: String = env.getProperty("twilio.auth.token", "")
@@ -37,16 +36,22 @@ class SMSController(
 
     @PostMapping("/sms/request")
     fun sendSMSVerification(@RequestBody request: SMSRequest): ResponseEntity<SMSRequestResponse> {
-        val phone = request.phone
+        val isReset = request.isReset
         try {
-            if (true) {
+            if (isReset) {
+                if (userService.phoneExist(request.phone)) {
+                    Twilio.init(TWILIO_ACCOUNT_SID,TWILIO_AUTH_TOKEN)
+                    VerificationCreator(VERIFY_SERVICE_SID, request.phone, "sms")
+                        .create()
+                    return ResponseEntity.ok().body(SMSRequestResponse("Verification Code Sent"))
+                } else {
+                    return ResponseEntity.ok().body(SMSRequestResponse(""))
+                }
+            } else {
                 Twilio.init(TWILIO_ACCOUNT_SID,TWILIO_AUTH_TOKEN)
                 VerificationCreator(VERIFY_SERVICE_SID, request.phone, "sms")
                     .create()
                 return ResponseEntity.ok().body(SMSRequestResponse("Verification Code Sent"))
-            } else {
-                return ResponseEntity.ok(SMSRequestResponse(""))
-                //throw ResponseStatusException(HttpStatus.FORBIDDEN, "Phone doesn't exist")
             }
         } catch(tE: TwilioException) {
             throw Exception("Error in twilio: ${tE.message}," + "Reason: ${tE.cause}")

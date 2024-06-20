@@ -2,7 +2,6 @@ package com.cropyback.cropyback.authentication
 
 import com.cropyback.cropyback.authentication.filter.JWTAuthenticationFilter
 import com.cropyback.cropyback.authentication.service.JwtTokenService
-import com.cropyback.cropyback.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
@@ -18,7 +17,7 @@ import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import IpFilter
 import FakeIpFilter
-
+import com.cropyback.cropyback.database.sql.service.UserJpaService
 
 
 @Configuration
@@ -47,7 +46,7 @@ class SecurityConfig {
     @Autowired
     private lateinit var jwtService: JwtTokenService
     @Autowired
-    private lateinit var service: UserService
+    private lateinit var service: UserJpaService
 
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {

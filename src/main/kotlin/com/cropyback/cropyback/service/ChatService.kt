@@ -4,12 +4,9 @@ import com.cropyback.cropyback.api.kafka.producer.MessageEventProducer
 import com.cropyback.cropyback.api.websocket.ChatMessage
 import com.cropyback.cropyback.database.entities.chat.ChatEntity
 import com.cropyback.cropyback.database.entities.chat.MessageEntity
-import com.cropyback.cropyback.database.entities.chat.MessageRequest
 import com.cropyback.cropyback.repository.ChatsRepository
-import com.cropyback.cropyback.repository.UserRepository
 import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.core.env.Environment
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
@@ -30,16 +27,17 @@ class ChatService(
         val messageIt = message.messageContent
         val attachment = message.attachament
 
-        val query = Query().addCriteria(
-            Criteria().orOperator(
-                Criteria.where("messages").elemMatch(
-                    Criteria.where("sentBy").`is`(ObjectId(sender)).and("owner").`is`(ObjectId(receiver))
-                ),
-                Criteria.where("messages").elemMatch(
-                    Criteria.where("owner").`is`(ObjectId(receiver)).and("sentBy").`is`(ObjectId(sender))
-                )
-            )
+
+
+        val senderId = ObjectId(sender)
+        val receiverId = ObjectId(receiver)
+
+        val elemMatchCriteria = Criteria().orOperator(
+            Criteria.where("sentBy").`is`(senderId).and("owner").`is`(receiverId),
+            Criteria.where("sentBy").`is`(receiverId).and("owner").`is`(senderId)
         )
+
+        val query = Query().addCriteria(Criteria.where("messages").elemMatch(elemMatchCriteria))
 
         val existingChat = mongoTemplate.findOne(query, ChatEntity::class.java)
         if (existingChat != null) {

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service
 class UserService(
     private val userRepository: UserRepository,
     private val mongoTemplate: MongoTemplate
-) : UserDetailsService {
+) {
 
     private val passwordEncoder = BCryptPasswordEncoder()
 
@@ -46,16 +46,6 @@ class UserService(
         val criteria = Criteria().orOperator(Criteria.where("phone").`is`(phone))
         val query = Query(criteria)
         return mongoTemplate.exists(query, UserEntity::class.java)
-    }
-
-    override fun loadUserByUsername(username: String?): UserDetails {
-        val user = getAllUsers().find { it.username == username }
-        val userDetails = User.builder()
-            .username(user?.username)
-            .password(user?.password)
-            .roles(user?.role)
-            .build()
-        return userDetails
     }
 
     fun updateUserImages(user: UserEntity) {

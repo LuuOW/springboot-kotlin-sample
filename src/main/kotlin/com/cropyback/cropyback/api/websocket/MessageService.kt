@@ -3,28 +3,21 @@ import com.cropyback.cropyback.api.websocket.ChatMessage
 import com.cropyback.cropyback.api.websocket.SessionRegistry
 import com.cropyback.cropyback.api.websocket.queue.QueueProducer
 import com.cropyback.cropyback.api.websocket.utils.CodingUtils.decodeImageWithIdsToBuffer
-import com.cropyback.cropyback.database.entities.user.ImageEntity
-import com.cropyback.cropyback.service.ChatService
-import com.cropyback.cropyback.service.ImageService
+import com.cropyback.cropyback.database.sql.service.ChatJpaService
+import com.cropyback.cropyback.database.sql.service.ImageJpaService
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.mongodb.gridfs.GridFsTemplate
 import org.springframework.stereotype.Service
-import org.springframework.web.socket.BinaryMessage
-import org.springframework.web.socket.CloseStatus
-import org.springframework.web.socket.TextMessage
-import org.springframework.web.socket.WebSocketMessage
-import org.springframework.web.socket.WebSocketSession
+import org.springframework.web.socket.*
 import java.io.ByteArrayInputStream
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 
 @Service
 class MessageService(
-    private val chatService: ChatService,
-    private val gridFsTemplate: GridFsTemplate,
+    private val chatService: ChatJpaService,
     private val imageEventProducer: ImageEventProducer
 ) {
 
@@ -33,7 +26,7 @@ class MessageService(
     private lateinit var queueProducer: QueueProducer
 
     @Autowired
-    lateinit var imageService: ImageService
+    lateinit var imageService: ImageJpaService
 
     @OptIn(ExperimentalEncodingApi::class)
     fun sendDirectMessage(
@@ -63,11 +56,12 @@ class MessageService(
                 recipientSession.sendMessage(BinaryMessage(quadruple.first))
 
                 val inputStream = ByteArrayInputStream(quadruple.first.array())
-                val fileId = gridFsTemplate.store(inputStream, "image.jpeg", "image/jpeg")
-                val image = ImageEntity(id = fileId, filename="image.jpeg")
-                imageService.saveImage(image)
-                imageEventProducer.sendUploadImageEvent(fileId.toString(), quadruple.second)
-                chatService.saveMessage(ChatMessage(senderId = quadruple.third, recipientId = quadruple.second, messageContent = quadruple.fourth, attachament = fileId.toString()))
+
+                val image = imageService.storeBlob(name = "attachment" , data = inputStream.readBytes())
+
+                imageEventProducer.sendUploadImageEvent(image.id.toString(), quadruple.second)
+
+                chatService.saveMessage(ChatMessage(senderId = quadruple.third, recipientId = quadruple.second, messageContent = quadruple.fourth, attachament = image.id.toString()))
 
             }
 

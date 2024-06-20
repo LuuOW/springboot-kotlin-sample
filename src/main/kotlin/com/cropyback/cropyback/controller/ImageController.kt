@@ -2,6 +2,8 @@ package com.cropyback.cropyback.controller
 
 import com.cropyback.cropyback.api.kafka.producer.ImageEventProducer
 import com.cropyback.cropyback.database.entities.user.ImageEntity
+import com.cropyback.cropyback.database.sql.service.ImageJpaService
+import com.cropyback.cropyback.database.sql.user.ImageModel
 import com.cropyback.cropyback.service.ImageService
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.*
@@ -29,61 +31,50 @@ import java.util.*
 @RestController
 @RequestMapping("/api")
 class ImageController(
-    private val gridFsTemplate: GridFsTemplate,
     private val imageEventProducer: ImageEventProducer
     ) {
 
     @Autowired
-    lateinit var imageService: ImageService
+    private lateinit var imageJpaService: ImageJpaService
+
+    //lateinit var imageService: ImageService
 
     @PostMapping("/images")
     fun saveImage(
         @RequestParam("image") file: MultipartFile,
         @RequestParam("filename") filename: String,
         @RequestParam("user_id") user: String
-    ): ImageEntity {
-
-        val fileId = gridFsTemplate.store(
-            file.inputStream,
-            filename,
-            file.contentType,
-        ).toString()
-        val image = ImageEntity(id = ObjectId(fileId), filename=filename)
-        imageService.saveImage(image)
-
-        imageEventProducer.sendUploadImageEvent(fileId, user)
-
-        return image
+    ) {
+        imageJpaService.storeBlob(filename, data = file.bytes)
+        //imageEventProducer.sendUploadImageEvent(fileId, user)
     }
 
     @GetMapping("/images")
-    fun getAllImages(): ResponseEntity<List<ImageEntity>> {
-        return ResponseEntity.ok().body(imageService.getAllImages())
+    fun getAllImages(): ResponseEntity<MutableList<ImageModel>> {
+        return ResponseEntity.ok().body(imageJpaService.retrieveAllBlobs())
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/image")
     fun getImage(@Param("id") id: String): ResponseEntity<ByteArrayResource> {
-        val image = gridFsTemplate.findOne(Query(Criteria.where("_id").`is`(ObjectId(id))))
+        val image = imageJpaService.retrieveBlob(id.toLong())
 
-        return if (!image.equals(null)) {
+        if (image != null) { // Check if image is not null
 
-/*            val contentType = image.metadata?.get("contentType")?.toString()
-                ?.let { MediaType.valueOf(it) } ?: MediaType.APPLICATION_OCTET_STREAM*/
+            val contentType = MediaType.IMAGE_JPEG // Default content type
 
-            val contentType = try {
-                MediaType.parseMediaType(image.metadata?.get("contentType")?.toString() ?: "image/jpeg")
-            } catch (e: InvalidMediaTypeException) {
-                MediaType.IMAGE_JPEG // Default to JPEG if invalid
-            }
+            val imageBytes = image.data // Access image data directly from the model
 
-
-            ResponseEntity.ok()
+            val responseEntity = ResponseEntity.ok()
                 .contentType(contentType)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + image.filename + "\"")  // Add this line
-                .body(ByteArrayResource(gridFsTemplate.getResource(image).inputStream.readBytes()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + image.name + "\"")
+                .body(ByteArrayResource(imageBytes))
+
+            return responseEntity
         } else {
-            ResponseEntity.notFound().build()
+            // Handle case where image is null (optional: return error or empty response)
+            return ResponseEntity.notFound().build() // Example for a 404 Not Found
         }
+
     }
 }

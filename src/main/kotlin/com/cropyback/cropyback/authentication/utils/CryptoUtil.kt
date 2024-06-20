@@ -1,10 +1,8 @@
 package com.cropyback.cropyback.authentication.utils
 
-import com.cropyback.cropyback.repository.ImageRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
 import java.util.*
-import javax.crypto.KeyGenerator
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 

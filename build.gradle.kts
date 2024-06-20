@@ -43,6 +43,11 @@ dependencies {
 	//cache
 	implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
 
+	runtimeOnly("com.mysql:mysql-connector-j")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+
+
 	// mail
 	implementation("com.sun.mail:jakarta.mail:2.0.1")
 

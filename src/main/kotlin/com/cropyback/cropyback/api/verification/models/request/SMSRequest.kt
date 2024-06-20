@@ -1,5 +1,6 @@
 package com.cropyback.cropyback.api.verification.models.request
 
 data class SMSRequest(
-    val phone: String
+    val phone: String,
+    val isReset: Boolean
 )
