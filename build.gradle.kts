@@ -56,19 +56,9 @@ dependencies {
 	implementation("com.squareup.retrofit2:retrofit:2.9.0")
 	implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
-
-
 	//utils
 	implementation("com.google.code.gson:gson:2.10.1")
-
-
-	// mongo
-	implementation ("org.mongodb:mongodb-driver-sync:4.11.2")
-	implementation("org.web3j:web3j-spring-boot-starter:1.6.0" )
-	implementation ("org.springframework.boot:spring-boot-starter-data-mongodb")
-	implementation ("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
-	implementation("org.mongodb:mongodb-driver-kotlin-coroutine:5.1.0")
-	implementation("org.mongodb:bson-kotlinx:5.1.0")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 
 	implementation("com.jcraft:jsch:0.1.55")
 

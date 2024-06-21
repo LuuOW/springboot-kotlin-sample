@@ -1,10 +1,6 @@
 package com.cropyback.cropyback.api.reset
 
-import com.cropyback.cropyback.database.entities.user.UserEntity
 import com.cropyback.cropyback.database.sql.jpa.UserJpaRepository
-import org.springframework.data.mongodb.core.MongoTemplate
-import org.springframework.data.mongodb.core.query.Criteria
-import org.springframework.data.mongodb.core.query.Query
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 

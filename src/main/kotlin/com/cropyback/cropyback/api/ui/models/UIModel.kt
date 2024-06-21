@@ -11,8 +11,9 @@ data class UIModel(
     val model_title: String = "model.title",
     val model_description: String = "model.description",
     val model_image: String = "",
-    val model_button_title: String = "model.button.title",
-    val model_button_action: String = "",
+    val model_buttons_titles: Array<String> = arrayOf("model.button.title"),
+    val model_buttons_images: Array<String> = arrayOf(),
+    val model_buttons_actions: Array<String> = arrayOf(),
     val model_primary_color: String = "",
     val model_secondary_color: String = ""
 )

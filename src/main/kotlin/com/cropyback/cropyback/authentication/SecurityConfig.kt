@@ -38,7 +38,8 @@ class SecurityConfig {
                 "/api/email/verify",
                 "/api/login",
                 "/api/signup",
-                "/api/password"
+                "/api/password",
+                "/api/ui"
             )
         }
     }
