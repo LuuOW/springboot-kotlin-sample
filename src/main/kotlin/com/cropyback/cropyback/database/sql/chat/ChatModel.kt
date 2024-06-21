@@ -1,9 +1,6 @@
 package com.cropyback.cropyback.database.sql.chat
 
-import com.cropyback.cropyback.database.sql.user.formatLocalDateTimeToString
 import jakarta.persistence.*
-import org.bson.types.ObjectId
-import java.time.LocalDateTime
 
 @Entity
 @Table(name = "chats")

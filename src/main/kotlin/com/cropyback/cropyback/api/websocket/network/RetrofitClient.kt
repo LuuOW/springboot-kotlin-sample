@@ -1,12 +1,8 @@
 package com.cropyback.cropyback.api.websocket.network
 
-import com.cropyback.cropyback.api.websocket.network.api.ImageApi
 import com.cropyback.cropyback.api.websocket.network.interceptors.AuthInterceptor
 import com.cropyback.cropyback.authentication.service.JwtTokenService
 import okhttp3.OkHttpClient
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -28,7 +24,5 @@ class RetrofitClient(
         .client(okHttpClient) // Use the client with the interceptor
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-
-    val imageApi = retrofit.create(ImageApi::class.java)
 
 }
