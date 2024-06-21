@@ -2,7 +2,7 @@ package com.cropyback.cropyback.controller
 
 import com.cropyback.cropyback.api.kafka.producer.MailEventProducer
 import com.cropyback.cropyback.api.verification.models.response.SMSRequestResponse
-import com.cropyback.cropyback.service.UserService
+import com.cropyback.cropyback.database.sql.service.UserJpaService
 import com.sun.mail.util.MailConnectException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -21,7 +21,7 @@ class MailController(
 ){
 
     @Autowired
-    private lateinit var userService: UserService
+    private lateinit var userService: UserJpaService
 
     @PostMapping("/email/request")
     fun sendVerificationCode(@RequestBody request: SendMailAddress):ResponseEntity<SMSRequestResponse> {

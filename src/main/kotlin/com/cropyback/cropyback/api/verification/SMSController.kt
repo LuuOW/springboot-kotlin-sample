@@ -39,7 +39,7 @@ class SMSController(
         val isReset = request.isReset
         try {
             if (isReset) {
-                if (userService.phoneExist(request.phone)) {
+                if (userService.userExist(request.phone) != null) {
                     Twilio.init(TWILIO_ACCOUNT_SID,TWILIO_AUTH_TOKEN)
                     VerificationCreator(VERIFY_SERVICE_SID, request.phone, "sms")
                         .create()

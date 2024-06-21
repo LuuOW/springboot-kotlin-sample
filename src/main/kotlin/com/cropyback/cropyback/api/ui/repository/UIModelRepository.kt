@@ -1,6 +1,5 @@
 package com.cropyback.cropyback.api.ui.repository
-import org.springframework.data.mongodb.repository.MongoRepository
-import org.bson.types.ObjectId
 import com.cropyback.cropyback.api.ui.models.UIModel
+import org.springframework.data.jpa.repository.JpaRepository
 
-interface UIModelRepository: MongoRepository<UIModel, ObjectId> {}
+interface UIModelRepository: JpaRepository<UIModel, Long> {}

@@ -18,12 +18,12 @@ class UserJpaService: UserDetailsService {
         return userJpaRepository.save(user)
     }
 
-    fun userExist(user: UserModel): Boolean {
-        return  userJpaRepository.existsByPhone(user.phone)
+    fun userExist(phone: String): UserModel? {
+        return  userJpaRepository.findByPhone(phone)
     }
 
-    fun phoneExist(phone: String): Boolean {
-        return userJpaRepository.existsByPhone(phone)
+    fun emailExist(email: String): Boolean {
+        return userJpaRepository.findByEmail(email).email != ""
     }
 
     fun findRoleByUsername(username: String): String {

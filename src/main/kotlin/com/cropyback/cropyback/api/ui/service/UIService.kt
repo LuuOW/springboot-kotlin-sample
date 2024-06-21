@@ -14,7 +14,7 @@ class UIService(
         uiModelsRepository.save(newUI)
     }
 
-    fun getComponentById(id: ObjectId): UIModel {
+    fun getComponentById(id: Long): UIModel {
         return uiModelsRepository.findById(id).get()
     }
 

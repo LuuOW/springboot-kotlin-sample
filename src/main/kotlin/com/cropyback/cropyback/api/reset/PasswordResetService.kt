@@ -1,7 +1,7 @@
 package com.cropyback.cropyback.api.reset
 
 import com.cropyback.cropyback.database.entities.user.UserEntity
-import com.cropyback.cropyback.repository.UserRepository
+import com.cropyback.cropyback.database.sql.jpa.UserJpaRepository
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
@@ -10,18 +10,17 @@ import org.springframework.stereotype.Service
 
 @Service
 class PasswordResetService(
-    private val mongoTemplate: MongoTemplate,
-    private val usersRepository: UserRepository
+    private val usersRepository: UserJpaRepository
 ){
 
     fun resetUserPassword(phone: String, newPassword: String) {
-        val query = Query().addCriteria(Criteria.where("phone").`is`(phone))
 
-        mongoTemplate.findOne(query, UserEntity::class.java).let { user ->
+        val user = usersRepository.findByPhone(phone)
+        if (user != null) {
             val bcrypt = BCryptPasswordEncoder()
             val hashedPassword = bcrypt.encode(newPassword)
-            val updatedUser =  user?.copy(password = hashedPassword)
-            usersRepository.save(updatedUser!!)
+            val updatedUser = user.copy(password = hashedPassword)
+            usersRepository.save(updatedUser)
         }
     }
 

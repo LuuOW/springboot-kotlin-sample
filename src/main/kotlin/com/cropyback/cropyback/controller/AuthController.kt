@@ -65,7 +65,7 @@ class AuthController(
         val newUser = request.toUserModel()
 
         try {
-            if (userJpaService.userExist(newUser)) {
+            if (userJpaService.userExist(newUser.phone) != null ) {
                 return ResponseEntity.ok(SignUpResponse("Error creating user already exist!"))
             } else {
                 userJpaService.registerUser(request.toUserModel())

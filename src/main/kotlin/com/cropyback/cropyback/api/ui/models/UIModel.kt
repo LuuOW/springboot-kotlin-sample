@@ -1,18 +1,18 @@
 package com.cropyback.cropyback.api.ui.models
 
-import com.google.gson.annotations.SerializedName
-import org.bson.types.ObjectId
-import org.springframework.data.mongodb.core.mapping.Document
-import org.springframework.data.annotation.Id
+import jakarta.persistence.*
 
-@Document(collection = "ui")
+@Entity
+@Table(name="ui")
 data class UIModel(
-    @Id val id: ObjectId = ObjectId(),
-    var model_title: String = "model.title",
-    var model_description: String = "model.description",
-    var model_image: String = "",
-    var model_button_title: String = "model.button.title",
-    var model_button_action: String = "",
-    var model_primary_color: String = "",
-    var model_secondary_color: String = ""
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0L,
+    val model_title: String = "model.title",
+    val model_description: String = "model.description",
+    val model_image: String = "",
+    val model_button_title: String = "model.button.title",
+    val model_button_action: String = "",
+    val model_primary_color: String = "",
+    val model_secondary_color: String = ""
 )
