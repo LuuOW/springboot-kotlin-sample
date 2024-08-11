@@ -39,7 +39,8 @@ class SecurityConfig {
                 "/api/login",
                 "/api/signup",
                 "/api/password",
-                "/api/ui"
+                "/api/ui/all",
+                "/api/ui",
             )
         }
     }

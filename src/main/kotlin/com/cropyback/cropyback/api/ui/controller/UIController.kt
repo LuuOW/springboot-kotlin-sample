@@ -14,8 +14,9 @@ class UIController {
     private lateinit var uiService: UIService
 
     @GetMapping("/ui/all")
-    fun getAllUI(): MutableList<UIModel> {
-        return uiService.getAllComponents()
+    fun getAllUI(): ResponseEntity<List<UIModel>> {
+        val allUI = uiService.getAllComponents()
+        return ResponseEntity.ok(allUI)
     }
 
     @GetMapping("/ui")
@@ -25,7 +26,7 @@ class UIController {
     }
 
     @PostMapping("/ui")
-    fun updateComponents(@RequestBody model: UIModel): MutableList<UIModel> {
+    fun updateComponents(@RequestBody model: UIModel): ResponseEntity<List<UIModel>> {
         uiService.updateLoginUI(model)
         return getAllUI()
     }
