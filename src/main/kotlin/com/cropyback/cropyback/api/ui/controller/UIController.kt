@@ -2,7 +2,9 @@ package com.cropyback.cropyback.api.ui.controller
 import com.cropyback.cropyback.api.ui.models.UIModel
 import com.cropyback.cropyback.api.ui.service.UIService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Role
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 
@@ -25,6 +27,7 @@ class UIController {
         return ResponseEntity.ok(model)
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/ui")
     fun updateComponents(@RequestBody model: UIModel): ResponseEntity<List<UIModel>> {
         uiService.updateLoginUI(model)

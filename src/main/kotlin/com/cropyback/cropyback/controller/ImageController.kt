@@ -39,7 +39,6 @@ class ImageController(
         return ResponseEntity.ok().body(imageJpaService.retrieveAllBlobs())
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/image")
     fun getImage(@Param("id") id: String): ResponseEntity<ByteArrayResource> {
         val image = imageJpaService.retrieveBlob(id.toLong())

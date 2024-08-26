@@ -1,0 +1,13 @@
+[
+  {
+    "relation" : [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target" : {
+      "namespace" : "android_app",
+      "package_name" : "com.lucaskempe.cropy",
+      "sha256_cert_fingerprints" : ["64:E2:7F:69:FC:6B:7C:86:5F:69:74:C7:91:F5:3F:6F:47:FE:94:51:31:FF:6F:F7:E1:2E:E7:5D:46:49:90:DC"]
+    }
+  }
+]

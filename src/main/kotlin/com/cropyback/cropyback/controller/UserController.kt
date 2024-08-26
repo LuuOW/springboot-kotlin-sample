@@ -15,7 +15,6 @@ class UserController(
     private val userService: UserJpaService
 ) {
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/users")
     fun getAllUser(): ResponseEntity<MutableList<UserModel>> {
         val userList = userService.getAllUsers()
@@ -23,7 +22,6 @@ class UserController(
         return response
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/user")
     fun getByUsername(@Param("username") username: String): ResponseEntity<UserModel> {
         val user = userService.findUserByUsername(username)

@@ -40,7 +40,7 @@ class SecurityConfig {
                 "/api/signup",
                 "/api/password",
                 "/api/ui/all",
-                "/api/ui",
+                "/.well-known/assetlinks.json"
             )
         }
     }
