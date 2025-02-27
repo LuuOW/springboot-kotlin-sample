@@ -14,8 +14,6 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 @EnableCaching
 @EnableWebSocket
 class CropybackApplication
-data class HearingAid(val serialNumber: String, val groupIdentifier: Int, val versionCode: String)
-
 
 fun main(args: Array<String>) {
 	runApplication<CropybackApplication>(*args)
